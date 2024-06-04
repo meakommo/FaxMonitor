@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <%- include ('templates/Header.ejs'); %>
+
+  <body class="">
+    <div class="wrapper">
+      <%- include ('templates/SideNav.ejs'); %>
+      <div class="main-panel">
+        <!-- Navbar -->
+        <nav
+          class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent"
+        >
+          <div class="container-fluid">
+            <div class="navbar-wrapper">
+              <!-- <a class="navbar-brand" href="javascript:;">Home Page</a> -->
+            </div>
+          </div>
+        </nav>
+        <!-- End Navbar -->
+        <div class="content">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <table class="table-striped">
+                  <thead>
+                    <tr>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% data.forEach(function(line) { %>
+                    <tr>
+                      <td><%= line %></td>
+                    </tr>
+                    <tr></tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%- include ('templates/Footer.ejs'); %>
+    </div>
+  </body>
+</html>

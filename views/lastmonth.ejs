@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<%- include ('templates/Header.ejs'); %>
+
+<body class="">
+    <div class="wrapper ">
+        <%- include ('templates/SideNav.ejs'); %>
+        <div class="main-panel">
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent">
+                <div class="container-fluid">
+                    <div class="navbar-wrapper">
+                        <!-- <a class="navbar-brand" href="javascript:;">Home Page</a> -->
+                    </div>
+                </div>
+            </nav>
+            <!-- End Navbar -->
+            <div class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card ">
+                            <div class="col-md-2">
+                                <br>
+                                <input type="text" id="search" placeholder="Search by fax number..."
+                                    class="form-control">
+
+                            </div>
+                            <div class="col-md-2">
+                                <br>
+                            </div>
+                            <table class="table-striped table-bordered col-md-12" id="myTable">
+                                <thead>
+                                    <tr>
+                                        <td class="col-md-1">Index</td>
+                                        <td class="col-md-1">Job Tag&nbsp;&nbsp;&nbsp;</td>
+                                        <td class="col-md-4">Sending server</td>
+                                        <td class="col-md-3">Job Number</td>
+                                        <td class="col-md-1">Fax Number&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                        <td class="col-md-3">Fail reason</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% data.forEach((row, index) => { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <% let columnIndex = 0; %>
+                                        <% for (let key in row) { %>
+                                        <% if (columnIndex === 2 || columnIndex === 3) { %>
+                                        <td><a
+                                                href="/searchresults?userReferred=<%= encodeURIComponent(row[key]) %>"><%= row[key] %></a>
+                                        </td>
+                                        <% } else { %>
+                                        <td><%= row[key] %></td>
+                                        <% } %>
+                                        <% columnIndex++; %>
+                                        <% } %>
+                                    </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%- include ('templates/Footer.ejs'); %>
+        </div>
+</body>
+
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#search").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tbody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+</body>

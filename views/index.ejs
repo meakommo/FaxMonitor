@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <%- include ('templates/Header.ejs'); %>
+
+  <body class="">
+    <div class="wrapper">
+      <%- include ('templates/SideNav.ejs'); %>
+      <div class="main-panel">
+        <!-- Navbar -->
+        <nav
+          class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent"
+        >
+          <div class="container-fluid">
+            <div class="navbar-wrapper">
+              <!-- <a class="navbar-brand" href="javascript:;">Home Page</a> -->
+            </div>
+          </div>
+        </nav>
+        <!-- End Navbar -->
+        <div class="content container-fluid">
+          <div class="row">
+            <div class="col-md-10">
+              <div class="card card-padding">
+                <form id="dateForm" class="form-inline">
+                  <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input
+                      type="date"
+                      id="date"
+                      name="date"
+                      class="form-control mx-2"
+                    />
+                  </div>
+                  <input
+                    class="btn btn-default mx-2"
+                    type="submit"
+                    value="Submit"
+                  />
+                  <div class="ml-auto">
+                    <button
+                      class="btn btn-success mx-2"
+                      id="prevDay"
+                      type="button"
+                    >
+                      Previous Day
+                    </button>
+                    <button
+                      class="btn btn-success mx-2"
+                      id="nextDay"
+                      type="button"
+                    >
+                      Next Day
+                    </button>
+                  </div>
+                </form>
+
+                <h4 id="dateHeader">24 Hours Performance</h4>
+                <canvas id="myChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <%- include ('templates/Footer.ejs'); %>
+      </div>
+    </div>
+    <!--   Core JS Files   -->
+    <script src="../assets/js/core/jquery.min.js"></script>
+    <script src="../assets/js/core/popper.min.js"></script>
+    <script src="../assets/js/core/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="../assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+    <script src="../assets/js/plugins/chartjs.min.js"></script>
+    <script src="../assets/js/plugins/bootstrap-notify.js"></script>
+
+    <script>
+
+      window.onload = function () {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, "0");
+        var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+        var yyyy = today.getFullYear();
+
+        today = yyyy + "-" + mm + "-" + dd;
+
+        var dateInput = document.getElementById("date");
+        if (!dateInput.value) {
+          dateInput.value = today;
+          fetchData(today);
+        }
+      };
+
+      document.getElementById("prevDay").addEventListener("click", function () {
+        adjustDate(-1);
+      });
+
+      document.getElementById("nextDay").addEventListener("click", function () {
+        adjustDate(1);
+      });
+
+      function adjustDate(days) {
+        var dateInput = document.getElementById("date");
+        var date = new Date(dateInput.value);
+        date.setDate(date.getDate() + days);
+        dateInput.value = date.toISOString().split("T")[0];
+
+        // Fetch the data for the new date
+        fetchData(dateInput.value);
+      }
+
+      var myChart; // Keep a reference to the chart
+
+      document
+  .getElementById("dateForm")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
+    const dateInput = document.getElementById("date");
+    const selectedDate = new Date(dateInput.value);
+    const currentDate = new Date();
+
+    // Remove the time part from the dates
+    selectedDate.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate > currentDate) {
+      // If the selected date is in the future
+      Notifications.showDateNotification('top','center');
+    } else {
+      // Fetch the data for the submitted date
+      fetchData(dateInput.value);
+    }
+  });
+  Notifications = {
+    showDateNotification: function(from, align) {
+    color = 'danger';
+
+        $.notify(
+          {
+            icon: "nc-icon nc-bell-55",
+            message:
+              "<b>A Future Date was selected - Please select a valid date</b>",
+          },
+          {
+            type: color,
+            timer: 10,
+            placement: {
+              from: from,
+              align: align,
+            },
+          }
+        );
+      }
+      // Additional Notifcation could go below here as a separate function
+      
+    }
+      function fetchData(date) {
+        fetch(`/graph?date=${date}`)
+          .then((response) => response.json())
+          .then((data) => {
+            let labels = Object.keys(data).sort(); // Sort the labels
+            let completedData = labels.map((label) => data[label].completed);
+            let failedData = labels.map((label) => data[label].failed);
+
+            var ctx = document.getElementById("myChart").getContext("2d");
+
+            // Destroy the existing chart if it exists
+            if (myChart) {
+              myChart.destroy();
+            }
+
+            // Create a new chart
+            myChart = new Chart(ctx, {
+              type: "line",
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    label: "Completed",
+                    data: completedData,
+                    backgroundColor: "rgba(75, 192, 192, 0.2)",
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    borderWidth: 1,
+                  },
+                  {
+                    label: "Failed",
+                    data: failedData,
+                    backgroundColor: "rgba(255, 99, 132, 0.2)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    borderWidth: 1,
+                  },
+                ],
+              },
+            });
+          });
+      }
+    </script>
+  </body>
+</html>

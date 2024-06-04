@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <%- include ('templates/Header.ejs'); %>
+
+  <body class="">
+    <div class="wrapper">
+      <%- include ('templates/SideNav.ejs'); %>
+      <div class="main-panel">
+        <!-- Navbar -->
+        <nav
+          class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent"
+        >
+          <div class="container-fluid">
+            <div class="navbar-wrapper">
+              <!-- <a class="navbar-brand" href="javascript:;">Home Page</a> -->
+            </div>
+          </div>
+        </nav>
+        <!-- End Navbar -->
+        <div class="content">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card card-padding">
+                <h4>Search for a Fax</h4>
+                <form class="form-inline" action="/searchresults" method="post">
+                    <!-- <div class="form-group"> -->
+                      <input
+                        type="text"
+                        class="form-control col-md-4"
+                        id="userInput"
+                        name="userInput"
+                        placeholder="Enter your search term:"
+                      />
+                    <!-- </div> -->
+                    <input
+                    class="btn btn-default md-2"
+                    type="submit"
+                    value="Submit"
+                  />
+                    
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%- include ('templates/Footer.ejs'); %>
+    </div>
+  </body>
+      <!--   Core JS Files   -->
+      <script src="../assets/js/core/jquery.min.js"></script>
+      <script src="../assets/js/core/popper.min.js"></script>
+      <script src="../assets/js/core/bootstrap.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="../assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+      <script src="../assets/js/plugins/chartjs.min.js"></script>
+      <script src="../assets/js/plugins/bootstrap-notify.js"></script>
+      <script>
+        document
+          .getElementById("userInput").form
+          .addEventListener("submit", function (event) {
+            const searchTermInput = document.getElementById("userInput");
+            if (!searchTermInput.value.trim()) {
+              // If the search term is empty or only contains whitespace
+              event.preventDefault(); // Prevent the form from being submitted
+              Notifications.showNotification('top', 'center'); // Show the notification
+            }
+          });
+        
+        Notifications = {
+          showNotification: function(from, align) {
+            color = 'danger';
+        
+            $.notify(
+              {
+                icon: "nc-icon nc-bell-55",
+                message:
+                  "<b>No Search term was entered - Please enter a Fax number or Job ID</b>",
+              },
+              {
+                type: color,
+                timer: 10,
+                placement: {
+                  from: from,
+                  align: align,
+                },
+              }
+            );
+          }
+          // Additional Notifcation could go below here as a separate function
+        };
+        </script>
+</html>

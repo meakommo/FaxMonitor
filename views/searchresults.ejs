@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <%- include ('templates/Header.ejs'); %>
+
+  <body class="">
+    <div class="wrapper">
+      <%- include ('templates/SideNav.ejs'); %>
+      <div class="main-panel">
+        <!-- Navbar -->
+        <nav
+          class="navbar navbar-expand-lg navbar-absolute fixed-top navbar-transparent"
+        >
+          <div class="container-fluid">
+            <div class="navbar-wrapper">
+              <!-- <a class="navbar-brand" href="javascript:;">Home Page</a> -->
+            </div>
+          </div>
+        </nav>
+        <!-- End Navbar -->
+        <div class="content">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div><br /></div>
+                <h2>Search Results</h2>
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Results</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% data.forEach(function(line) { let match =
+                    line.match(/UFAX\S*/); let ufaxStrings = match ? match[0] :
+                    ''; let rowClass = ''; if
+                    (line.toLowerCase().includes('failed')) { rowClass =
+                    'btn-warning'; } else if
+                    (line.toLowerCase().includes('completed')) { rowClass =
+                    'btn-info'; } %>
+                    <tr class="<%= rowClass %>">
+                      <td>
+                        <a
+                          href="/review?ufaxStrings=<%= encodeURIComponent(ufaxStrings) %>"
+                          target="_blank"
+                          style="color: black"
+                          ><%= line %></a
+                        >
+                      </td>
+                    </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%- include ('templates/Footer.ejs'); %>
+    </div>
+  </body>
+</html>
